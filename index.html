@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <script>
+        const calcObj = {
+            numbers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            actions: [
+                {
+                    symbol: '+',
+                    operation: 'sum'
+                },
+                {
+                    symbol: '-',
+                    operation: 'subtract'
+                }, {
+
+                    symbol: '*',
+                    operation: 'multiplication'
+                },
+                {
+                    symbol: '/',
+                    operation: 'division'
+                },
+                {
+
+                    symbol: '%',
+                    operation: 'percent'
+                },
+                {
+                    symbol: '=',
+                    operation: 'equal'
+                },
+                {
+                    symbol: 'C',
+                    operation: 'cancel'
+                }
+            ]
+        }
+
+        function creatCalculator(obj) {
+            const script = document.querySelector('script');
+
+            const calcWrap = document.createElement('div');
+            calcWrap.classList.add('calc');
+
+            const output = document.createElement('output');
+            output.classList.add('output');
+
+            const numbWrap = new DocumentFragment;
+            for (const item of obj.numbers) {
+                const number = document.createElement('button');
+                number.textContent = item;
+                number.classList.add('number');
+                numbWrap.append(number);
+            }
+
+            const actionsWrap = new DocumentFragment;
+            for (const item of obj.actions) {
+                const action = document.createElement('button');
+                action.textContent = item.symbol;
+                action.classList.add('action', `action__${item.operation}`);
+
+                actionsWrap.append(action);
+            }
+
+            calcWrap.append(output, numbWrap, actionsWrap);
+
+            //////////calculator logic
+            let action;
+            let numb1;
+            let numb2;
+
+            calcWrap.addEventListener('click', event => {
+                const target = event.target;
+                const inText = target.innerText;
+
+                if (target.className == "calc") return;
+                if (inText == "C") return output.innerText = '';
+
+                if (inText == "+" || inText == "-" || inText == "*" || inText == "/") {
+                    numb1 = +output.textContent;
+                    output.innerText = '';
+                    action = inText;
+                };
+
+                if (inText == "%") {
+                    numb1 = +output.textContent;
+                    output.innerText = numb1 / 100;
+                };
+
+                if (inText == "=") {
+                    numb2 = +output.textContent.slice(1);
+                    let res;
+                    if (action == '+') {
+                        res = numb1 + numb2;
+                    } else if (action == '-') {
+                        res = numb1 - numb2;
+                    } else if (action == '*') {
+                        res = numb1 * numb2;
+                    } else if (action == '/') {
+                        res = numb1 / numb2;
+                    }
+                    output.textContent = res;
+                };
+
+                output.textContent += target.innerText;
+            })
+
+            return script.before(calcWrap);
+        }
+
+        creatCalculator(calcObj);
+
+
+
+    </script>
+</body>
+
+</html>
